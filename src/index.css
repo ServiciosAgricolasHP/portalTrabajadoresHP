@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+/* Paleta basada en admin (verde HP) pero apretada a las pocas vars que el
+   portal necesita. Todo se sirve via Tailwind utility classes para
+   minimizar CSS custom. */
+:root {
+  color-scheme: light;
+  --hp-bg: #f5f7f5;
+  --hp-surface: #ffffff;
+  --hp-text: #0f172a;
+  --hp-muted: #64748b;
+  --hp-border: #e2e8f0;
+  --hp-accent: #0f766e;
+  --hp-accent-soft: #ccfbf1;
+  --hp-accent-fg: #ffffff;
+  --hp-danger: #b91c1c;
+  --hp-warn: #b45309;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--hp-bg);
+  color: var(--hp-text);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* La infografía usa esta clase como root del nodo capturado por
+   html-to-image. Forzamos el fondo blanco al exportar a PNG para que se vea
+   bien si el usuario la pega sobre WhatsApp / fondo oscuro. */
+.infografia {
+  background: #ffffff;
+}

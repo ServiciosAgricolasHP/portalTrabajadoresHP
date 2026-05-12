@@ -19,3 +19,8 @@ node_modules/
 .env
 .env.local
 .env.*.local
+
+# Datos reales de nómina. Cada nómina vive solo en el working tree del que
+# deploya — gh-pages la publica como estático. Para correr local, copiar
+# public/data.example.json a public/data.json.
+public/data.json

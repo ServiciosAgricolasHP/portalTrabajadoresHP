@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "generatedAt": "2026-05-10T15:00:00.000Z",
+  "payrollId": "DEMO",
+  "payroll": {
+    "name": "Nómina demo - mayo 2026",
+    "format": "bchile",
+    "status": "pending",
+    "total": 450000,
+    "bankTotal": 280000,
+    "cashTotal": 170000,
+    "workerCount": 2,
+    "bankCount": 1,
+    "cashCount": 1,
+    "advanceTotal": 30000
+  },
+  "cycles": [
+    {
+      "id": "demo-ciclo-1",
+      "label": "Campo Sur / Cuartel 3 / Cosecha temprana",
+      "labors": [{ "id": "lab-1", "name": "Cosecha", "type": "cosecha" }]
+    },
+    {
+      "id": "demo-ciclo-2",
+      "label": "Campo Norte / Cuartel 1 / Raleo",
+      "labors": [{ "id": "lab-2", "name": "Raleo", "type": "trato" }]
+    }
+  ],
+  "workers": [
+    {
+      "rut": "12345678-9",
+      "name": "Juan Pérez González",
+      "accountNumber": "001234567890",
+      "bankCode": "012",
+      "accountType": 3,
+      "email": "",
+      "groupLeader": "CHILENOS",
+      "grossAmount": 310000,
+      "advance": 30000,
+      "advanceNote": "Vale del 02 may",
+      "anticiposTotal": 30000,
+      "adelantosTotal": 0,
+      "amount": 280000,
+      "byCycle": {
+        "demo-ciclo-1": { "amount": 180000 },
+        "demo-ciclo-2": { "amount": 130000 }
+      },
+      "workdayIds": ["wd-1", "wd-2", "wd-3", "wd-4", "wd-5"]
+    },
+    {
+      "rut": "23456789-K",
+      "name": "María Soto Aravena",
+      "accountNumber": "",
+      "bankCode": "EFE",
+      "accountType": null,
+      "email": "",
+      "groupLeader": "EXTRANJEROS",
+      "grossAmount": 170000,
+      "advance": 0,
+      "advanceNote": "",
+      "anticiposTotal": 0,
+      "adelantosTotal": 0,
+      "amount": 170000,
+      "byCycle": {
+        "demo-ciclo-1": { "amount": 170000 }
+      },
+      "workdayIds": ["wd-6", "wd-7", "wd-8"]
+    }
+  ],
+  "workdays": [
+    { "id": "wd-1", "cycleId": "demo-ciclo-1", "laborId": "lab-1", "workerRut": "12345678-9", "date": "2026-05-04", "qty": 45, "amount": 45000 },
+    { "id": "wd-2", "cycleId": "demo-ciclo-1", "laborId": "lab-1", "workerRut": "12345678-9", "date": "2026-05-05", "qty": 50, "amount": 50000 },
+    { "id": "wd-3", "cycleId": "demo-ciclo-1", "laborId": "lab-1", "workerRut": "12345678-9", "date": "2026-05-06", "qty": 85, "amount": 85000 },
+    { "id": "wd-4", "cycleId": "demo-ciclo-2", "laborId": "lab-2", "workerRut": "12345678-9", "date": "2026-05-07", "qty": 1, "amount": 65000 },
+    { "id": "wd-5", "cycleId": "demo-ciclo-2", "laborId": "lab-2", "workerRut": "12345678-9", "date": "2026-05-08", "qty": 1, "amount": 65000 },
+    { "id": "wd-6", "cycleId": "demo-ciclo-1", "laborId": "lab-1", "workerRut": "23456789-K", "date": "2026-05-04", "qty": 60, "amount": 60000 },
+    { "id": "wd-7", "cycleId": "demo-ciclo-1", "laborId": "lab-1", "workerRut": "23456789-K", "date": "2026-05-05", "qty": 55, "amount": 55000 },
+    { "id": "wd-8", "cycleId": "demo-ciclo-1", "laborId": "lab-1", "workerRut": "23456789-K", "date": "2026-05-06", "qty": 55, "amount": 55000 }
+  ],
+  "advances": [
+    { "id": "adv-1", "workerRut": "12345678-9", "type": "anticipo", "amount": 30000, "date": "2026-05-02", "note": "Vale del 02 may", "status": "applied" }
+  ]
+}

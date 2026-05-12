@@ -25,6 +25,16 @@ export function fmtDateLong(yyyyMmDd) {
   });
 }
 
+// "2026-05-11" → "11 may" — sin año, para listas largas dentro de una
+// misma nómina (todas las fechas pertenecen al mismo período).
+export function fmtDateShort(yyyyMmDd) {
+  if (!yyyyMmDd) return "";
+  const [y, m, d] = String(yyyyMmDd).split("-").map(Number);
+  if (!y || !m || !d) return String(yyyyMmDd);
+  const date = new Date(y, m - 1, d);
+  return date.toLocaleDateString("es-CL", { day: "2-digit", month: "short" });
+}
+
 // ISO timestamp → "11 may 2026, 14:32"
 export function fmtTimestamp(iso) {
   if (!iso) return "";

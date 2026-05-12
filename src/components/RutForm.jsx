@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { formatRutForDisplay, normalizeRut } from "../utils/rutUtils.js";
-import { fmtCurrency, fmtTimestamp } from "../utils/formatters.js";
+import { fmtTimestamp } from "../utils/formatters.js";
 
 export default function RutForm({
   payroll,
   generatedAt,
-  workerCount,
   onSubmit,
   notFound,
 }) {
@@ -28,22 +27,11 @@ export default function RutForm({
   return (
     <div className="space-y-5">
       <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h1 className="text-lg font-semibold text-slate-800">
-            {payroll?.name || "Nómina actual"}
-          </h1>
-          {payroll?.total != null && (
-            <span className="text-sm text-slate-500">
-              Total del pago:{" "}
-              <span className="font-medium text-slate-700">
-                {fmtCurrency(payroll.total)}
-              </span>
-            </span>
-          )}
-        </div>
+        <h1 className="text-lg font-semibold text-slate-800">
+          {payroll?.name || "Nómina actual"}
+        </h1>
         <p className="mt-1 text-xs text-slate-500">
-          Generada {fmtTimestamp(generatedAt)} · {workerCount} trabajador
-          {workerCount === 1 ? "" : "es"}
+          Generada {fmtTimestamp(generatedAt)}
         </p>
 
         <form onSubmit={handleSubmit} className="mt-5 space-y-2">

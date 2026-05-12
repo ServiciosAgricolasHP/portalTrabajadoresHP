@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import RutForm from "./components/RutForm.jsx";
 import PaymentInfographic from "./components/PaymentInfographic.jsx";
 import { normalizeRut } from "./utils/rutUtils.js";
+import { isBanned } from "./utils/banlist.js";
 
 // El portal sirve un único `data.json` que vive en /public. Lo escribe
 // adminAgrofrutos al generar una nómina (botón "📥 JSON" en historial) y
@@ -46,6 +47,12 @@ export default function App() {
     if (!snapshot) return;
     const rut = normalizeRut(raw);
     if (!rut) return;
+    // Banlist tiene prioridad: mismo mensaje que "no encontrado" — no
+    // queremos que el portal revele que el RUT está bloqueado.
+    if (isBanned(rut)) {
+      setNotFound(true);
+      return;
+    }
     const found = (snapshot.workers || []).find(
       (w) => normalizeRut(w.rut) === rut,
     );
@@ -114,7 +121,6 @@ export default function App() {
           <RutForm
             payroll={snapshot?.payroll}
             generatedAt={snapshot?.generatedAt}
-            workerCount={snapshot?.workers?.length || 0}
             onSubmit={handleSubmit}
             notFound={notFound}
           />

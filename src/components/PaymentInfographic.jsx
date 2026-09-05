@@ -56,12 +56,12 @@ function laborSubtypeLabel(labor) {
 // es público mostramos solo los últimos 4 dígitos.
 function paymentSummary(worker) {
   const bank = String(worker?.bankCode || "").toUpperCase();
-  if (!bank || bank === "EFE") return { label: "Efectivo", detail: null };
+  if (!bank || bank === "EFE") return { label: "Efectivo", detail: null, isCash: true };
   const acct = String(worker?.accountNumber || "").trim();
   const last4 = acct ? `····${acct.slice(-4)}` : "";
   const type = accountTypeLabel(worker?.accountType);
   const detail = [type, last4].filter(Boolean).join(" ");
-  return { label: bankName(bank), detail: detail || null };
+  return { label: bankName(bank), detail: detail || null, isCash: false };
 }
 
 // Cantidad efectiva del workday, agregando tiers si es trato multi-precio.
@@ -560,6 +560,11 @@ export default function PaymentInfographic({ snapshot, worker }) {
             )}
           </span>
         </div>
+        {pay.isCash && (
+          <div className="mt-1 px-1 text-[11px] text-amber-700">
+            ⚠ El pago en efectivo no tiene una fecha específica de pago.
+          </div>
+        )}
 
         <footer className="mt-4 flex flex-wrap items-baseline justify-between gap-2 text-[11px] text-slate-400">
           <span>Generado: {fmtTimestamp(snapshot.generatedAt)}</span>

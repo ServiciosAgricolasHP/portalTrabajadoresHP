@@ -6,13 +6,14 @@
     "name": "Nómina demo - mayo 2026",
     "format": "bchile",
     "status": "pending",
-    "total": 450000,
-    "bankTotal": 280000,
+    "total": 470000,
+    "bankTotal": 300000,
     "cashTotal": 170000,
     "workerCount": 2,
     "bankCount": 1,
     "cashCount": 1,
-    "advanceTotal": 30000
+    "advanceTotal": 20000,
+    "bonusTotal": 10000
   },
   "cycles": [
     {
@@ -22,8 +23,18 @@
     },
     {
       "id": "demo-ciclo-2",
-      "label": "Campo Norte / Cuartel 1 / Raleo",
-      "labors": [{ "id": "lab-2", "name": "Raleo", "type": "trato" }]
+      "label": "Campo Norte / Cuartel 1 / Instalación de carpas",
+      "labors": [
+        {
+          "id": "lab-2",
+          "name": "Instalación carpas",
+          "type": "tratoEtapas",
+          "stages": [
+            { "id": "st-prep", "name": "Preparación", "counts": false },
+            { "id": "st-inst", "name": "Instalación", "counts": true }
+          ]
+        }
+      ]
     }
   ],
   "workers": [
@@ -36,14 +47,18 @@
       "email": "",
       "groupLeader": "CHILENOS",
       "grossAmount": 310000,
-      "advance": 30000,
-      "advanceNote": "Vale del 02 may",
-      "anticiposTotal": 30000,
+      "advance": 20000,
+      "bonus": 10000,
+      "advanceNote": "Anticipos 1 · Bonos 1",
+      "anticipoApplications": [{ "advanceId": "adv-1", "amount": 20000 }],
+      "bonoApplications": [{ "advanceId": "adv-2", "amount": 10000 }],
+      "anticiposTotal": 20000,
+      "bonosTotal": 10000,
       "adelantosTotal": 0,
-      "amount": 280000,
+      "amount": 300000,
       "byCycle": {
-        "demo-ciclo-1": { "amount": 180000 },
-        "demo-ciclo-2": { "amount": 130000 }
+        "demo-ciclo-1": 180000,
+        "demo-ciclo-2": 130000
       },
       "workdayIds": ["wd-1", "wd-2", "wd-3", "wd-4", "wd-5"]
     },
@@ -57,12 +72,14 @@
       "groupLeader": "EXTRANJEROS",
       "grossAmount": 170000,
       "advance": 0,
+      "bonus": 0,
       "advanceNote": "",
       "anticiposTotal": 0,
+      "bonosTotal": 0,
       "adelantosTotal": 0,
       "amount": 170000,
       "byCycle": {
-        "demo-ciclo-1": { "amount": 170000 }
+        "demo-ciclo-1": 170000
       },
       "workdayIds": ["wd-6", "wd-7", "wd-8"]
     }
@@ -71,13 +88,14 @@
     { "id": "wd-1", "cycleId": "demo-ciclo-1", "laborId": "lab-1", "workerRut": "12345678-9", "date": "2026-05-04", "qty": 45, "amount": 45000 },
     { "id": "wd-2", "cycleId": "demo-ciclo-1", "laborId": "lab-1", "workerRut": "12345678-9", "date": "2026-05-05", "qty": 50, "amount": 50000 },
     { "id": "wd-3", "cycleId": "demo-ciclo-1", "laborId": "lab-1", "workerRut": "12345678-9", "date": "2026-05-06", "qty": 85, "amount": 85000 },
-    { "id": "wd-4", "cycleId": "demo-ciclo-2", "laborId": "lab-2", "workerRut": "12345678-9", "date": "2026-05-07", "qty": 1, "amount": 65000 },
-    { "id": "wd-5", "cycleId": "demo-ciclo-2", "laborId": "lab-2", "workerRut": "12345678-9", "date": "2026-05-08", "qty": 1, "amount": 65000 },
+    { "id": "wd-4", "cycleId": "demo-ciclo-2", "laborId": "lab-2", "workerRut": "12345678-9", "date": "2026-05-07", "stageId": "st-prep", "qty": 1, "amount": 20000 },
+    { "id": "wd-5", "cycleId": "demo-ciclo-2", "laborId": "lab-2", "workerRut": "12345678-9", "date": "2026-05-08", "stageId": "st-inst", "qty": 2, "amount": 110000 },
     { "id": "wd-6", "cycleId": "demo-ciclo-1", "laborId": "lab-1", "workerRut": "23456789-K", "date": "2026-05-04", "qty": 60, "amount": 60000 },
     { "id": "wd-7", "cycleId": "demo-ciclo-1", "laborId": "lab-1", "workerRut": "23456789-K", "date": "2026-05-05", "qty": 55, "amount": 55000 },
     { "id": "wd-8", "cycleId": "demo-ciclo-1", "laborId": "lab-1", "workerRut": "23456789-K", "date": "2026-05-06", "qty": 55, "amount": 55000 }
   ],
   "advances": [
-    { "id": "adv-1", "workerRut": "12345678-9", "type": "anticipo", "amount": 30000, "date": "2026-05-02", "note": "Vale del 02 may", "status": "applied" }
+    { "id": "adv-1", "workerRut": "12345678-9", "type": "anticipo", "amount": 20000, "amountPaid": 20000, "date": "2026-05-02", "note": "Vale del 02 may", "status": "applied" },
+    { "id": "adv-2", "workerRut": "12345678-9", "type": "bono", "amount": 10000, "amountPaid": 10000, "date": "2026-05-09", "note": "Bono producción", "status": "applied" }
   ]
 }

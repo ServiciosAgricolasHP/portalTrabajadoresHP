@@ -3,33 +3,27 @@ import RutForm from "./components/RutForm.jsx";
 import PaymentInfographic from "./components/PaymentInfographic.jsx";
 import { normalizeRut } from "./utils/rutUtils.js";
 import { isBanned } from "./utils/banlist.js";
+import { getPayslip, getPublishedPayroll } from "./utils/portalData.js";
 
-// El portal sirve un único `data.json` que vive en /public. Lo escribe
-// adminAgrofrutos al generar una nómina (botón "📥 JSON" en historial) y
-// el operador lo deposita acá antes de hacer deploy. Convención: una sola
-// nómina activa por vez. Si en el futuro queremos histórico, este loader
-// pasa a leer un índice y a buscar el item correcto.
-function dataUrl() {
-  // import.meta.env.BASE_URL respeta el base de Vite (`/portalTrabajadoresHP/`)
-  // en producción y `/` en dev.
-  return `${import.meta.env.BASE_URL}data.json`;
-}
-
+// El portal muestra la nómina que TeRRa publicó (una por vez). Al abrir lee
+// su cabecera, y al buscar un RUT lee solo la ficha de esa persona.
 export default function App() {
-  const [snapshot, setSnapshot] = useState(null);
+  const [meta, setMeta] = useState(null);
   const [loadError, setLoadError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [payslip, setPayslip] = useState(null);
   const [worker, setWorker] = useState(null);
   const [notFound, setNotFound] = useState(false);
+  const [searching, setSearching] = useState(false);
+  const [searchError, setSearchError] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(dataUrl(), { cache: "no-store" });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
-        if (!cancelled) setSnapshot(json);
+        const published = await getPublishedPayroll();
+        if (!published) throw new Error("Todavía no hay una nómina publicada.");
+        if (!cancelled) setMeta(published);
       } catch (err) {
         if (!cancelled) setLoadError(err?.message || String(err));
       } finally {
@@ -41,28 +35,44 @@ export default function App() {
     };
   }, []);
 
-  const handleSubmit = (raw) => {
+  // Una ficha que no es de la nómina publicada (quedó de una anterior)
+  // cuenta como no encontrada.
+  const handleSubmit = async (raw) => {
     setNotFound(false);
+    setSearchError(null);
     setWorker(null);
-    if (!snapshot) return;
+    setPayslip(null);
+    if (!meta) return;
     const rut = normalizeRut(raw);
     if (!rut) return;
-    // Banlist tiene prioridad: mismo mensaje que "no encontrado" — no
-    // queremos que el portal revele que el RUT está bloqueado.
+    // La banlist da el mismo mensaje que "no encontrado", para no revelar que
+    // el RUT está bloqueado.
     if (isBanned(rut)) {
       setNotFound(true);
       return;
     }
-    const found = (snapshot.workers || []).find(
-      (w) => normalizeRut(w.rut) === rut,
-    );
-    if (found) setWorker(found);
-    else setNotFound(true);
+    setSearching(true);
+    try {
+      const doc = await getPayslip(rut);
+      const found = doc && doc.payrollId === meta.payrollId ? doc.workers?.[0] : null;
+      if (found) {
+        setPayslip(doc);
+        setWorker(found);
+      } else {
+        setNotFound(true);
+      }
+    } catch (err) {
+      setSearchError(err?.message || String(err));
+    } finally {
+      setSearching(false);
+    }
   };
 
   const handleClear = () => {
     setWorker(null);
+    setPayslip(null);
     setNotFound(false);
+    setSearchError(null);
   };
 
   if (loading) {
@@ -79,8 +89,8 @@ export default function App() {
         <Card>
           <h1 className="text-lg font-semibold">No se pudo cargar la nómina</h1>
           <p className="mt-2 text-sm text-slate-600">
-            El archivo de datos no está disponible. Pedile al administrador que
-            publique la nómina más reciente.
+            Los datos no están disponibles. Pide al administrador que publique
+            la nómina más reciente.
           </p>
           <p className="mt-3 break-all rounded bg-slate-50 p-2 text-[11px] font-mono text-slate-500">
             {loadError}
@@ -119,15 +129,17 @@ export default function App() {
       <main className="mx-auto max-w-3xl px-4 py-6">
         {!worker && (
           <RutForm
-            payroll={snapshot?.payroll}
-            generatedAt={snapshot?.generatedAt}
+            payroll={meta?.payroll}
+            generatedAt={meta?.generatedAt}
             onSubmit={handleSubmit}
             notFound={notFound}
+            searching={searching}
+            searchError={searchError}
           />
         )}
 
         {worker && (
-          <PaymentInfographic snapshot={snapshot} worker={worker} />
+          <PaymentInfographic snapshot={payslip} worker={worker} />
         )}
       </main>
 

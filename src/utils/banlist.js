@@ -1,7 +1,7 @@
 import { normalizeRut } from "./rutUtils.js";
 
-// RUTs que NO pueden consultar su detalle desde el portal, aunque estén
-// presentes en data.json. Para el usuario final se muestra el mismo mensaje
+// RUTs que NO pueden consultar su detalle desde el portal, aunque tengan
+// ficha publicada. Para el usuario final se muestra el mismo mensaje
 // que "no encontrado" — a propósito, para no exponer que la lista existe.
 //
 // Editar acá y volver a deployar para cambiar la lista.

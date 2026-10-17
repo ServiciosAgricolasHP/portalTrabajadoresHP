@@ -2,7 +2,7 @@
 
 Portal público de consulta de pagos para los trabajadores de HP Servicios Agrícolas. El trabajador ingresa su RUT y ve una infografía con el detalle de la nómina vigente, con opciones de copiar imagen y copiar texto.
 
-> Fuente de datos: un archivo `data.json` estático, generado por **adminAgrofrutos** al cerrar una nómina (botón "📥 JSON" en el historial). El portal sirve **una nómina activa por vez**.
+> Fuente de datos: Firestore (`arandanos-hp`, base `hpdatabase`). **TeRRa** publica la nómina con el botón **🌐 Publicar en portal** del detalle de una nómina: una ficha por trabajador en `portalPayslips/{rut}` y la cabecera en `portalMeta/current`. El portal sirve **una nómina por vez**.
 
 ## Stack
 
@@ -30,19 +30,19 @@ Path base `/portalTrabajadoresHP/` está en `vite.config.js`. No hay router — 
 
 ## Cómo publicar una nueva nómina
 
-1. En **adminAgrofrutos**, generá o re-descargá el snapshot JSON de la nómina (botón **📥 JSON** en el historial de Nómina).
-2. Renombrá ese archivo a `data.json` y reemplazalo en [`public/data.json`](public/data.json).
-3. Verificá localmente con `npm run dev`.
-4. `npm run deploy` para publicar.
+En **TeRRa → Nómina**, abrir la nómina y apretar **🌐 Publicar en portal** (solo admin). La publica la función `publishPortal` de TeRRa (`functions/portal.js`) y se ve al instante: **no hace falta volver a desplegar el portal**. El historial marca con **🌐 Portal** la que está publicada.
 
-> El portal lee `public/data.json` con `cache: "no-store"`, así que basta con re-deploy para que los trabajadores vean la nómina nueva sin tener que limpiar caché.
+- Al abrir, el portal lee `portalMeta/current` (1 lectura). Al buscar un RUT lee solo `portalPayslips/{rut}` (1 lectura). Las dos se hacen con la API REST de Firestore, sin sesión y sin SDK (`src/utils/portalData.js`).
+- Las reglas de Firestore dejan leer **de a un documento**: nadie puede bajar la nómina entera. Cada ficha trae solo lo de esa persona y la cuenta en 4 dígitos.
+- Una ficha cuyo `payrollId` no es el de la cabecera cuenta como "no encontrado".
+- El portal se vuelve a desplegar solo cuando cambia su código.
 
 ## Estructura
 
 ```
 src/
   main.jsx                       ← entry
-  App.jsx                        ← layout + carga de data.json + búsqueda por RUT
+  App.jsx                        ← layout + cabecera publicada + búsqueda por RUT
   index.css                      ← Tailwind import + vars HP
   components/
     RutForm.jsx                  ← input de RUT + cabecera de la nómina
@@ -51,13 +51,12 @@ src/
     rutUtils.js                  ← normalizar / formatear RUT (espejo del de admin)
     formatters.js                ← currency, fecha larga, timestamp
     banks.js                     ← nombre de banco / tipo de cuenta (espejo del de admin)
-public/
-  data.json                      ← snapshot de la nómina activa
+    portalData.js                ← lectura de la cabecera y de la ficha por RUT (API REST de Firestore)
 ```
 
-## Schema de `data.json` (contrato externo con admin)
+## Schema de una ficha (contrato con TeRRa)
 
-Es **exactamente** lo que escribe `payrollSnapshotsService` en adminAgrofrutos (ver `Payroll.jsx` → snapshot al generar/recalcular una nómina). El portal no lee todos los campos — abajo se marca con `←` lo que sí usa. Todo lo demás (`dayPrices`, `advanceIds`, `workdayIds`, `tierKey`, etc.) viaja en el archivo pero el portal lo ignora a propósito.
+Cada `portalPayslips/{rut}` tiene la forma del JSON de la nómina (`payrollSnapshots` en TeRRa) **recortada a un trabajador**: `workers` trae solo a esa persona (sin correo ni RUT de pago, y la cuenta en sus últimos 4 dígitos), y `cycles`, `workdays` y `advances`, solo lo suyo (los ciclos, sin `dayPrices`). Además lleva `payrollId` y `publishedAt`. Abajo se marca con `←` lo que el portal usa.
 
 El detalle del trabajador replica el mismo formato que usa admin internamente para el detalle de un trabajador dentro de una nómina (`Payroll.jsx` → `WorkerPaidDetailTables`): resumen Bruto/Anticipos/Bonos/Neto arriba, vista **Cronológica** por defecto (jornadas y anticipos/bonos intercalados por fecha) y vista alternativa **Por ciclo** (subtotal por ciclo + bloque de ajustes al final).
 

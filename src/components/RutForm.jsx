@@ -7,6 +7,8 @@ export default function RutForm({
   generatedAt,
   onSubmit,
   notFound,
+  searching = false,
+  searchError = null,
 }) {
   const [value, setValue] = useState("");
 
@@ -39,7 +41,7 @@ export default function RutForm({
             htmlFor="rut"
             className="block text-sm font-medium text-slate-700"
           >
-            Ingresá tu RUT
+            Ingresa tu RUT
           </label>
           <div className="flex flex-col gap-2 sm:flex-row">
             <input
@@ -55,10 +57,10 @@ export default function RutForm({
             />
             <button
               type="submit"
-              disabled={!normalizeRut(value)}
+              disabled={!normalizeRut(value) || searching}
               className="rounded-lg bg-teal-700 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-teal-800 disabled:opacity-50"
             >
-              Ver mi pago
+              {searching ? "Buscando…" : "Ver mi pago"}
             </button>
           </div>
           {value && (
@@ -73,8 +75,14 @@ export default function RutForm({
 
         {notFound && (
           <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-            No encontramos tu RUT en esta nómina. Verificá los dígitos o
-            consultá con tu líder de grupo.
+            No encontramos tu RUT en esta nómina. Revisa los dígitos o
+            consulta con tu líder de grupo.
+          </div>
+        )}
+
+        {searchError && (
+          <div className="mt-4 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
+            No se pudo consultar. Revisa tu conexión e inténtalo de nuevo.
           </div>
         )}
       </div>
